@@ -3,3 +3,4 @@ tiktoken
 torch
 blobfile
 matplotlib
+datasets == 2.21.0
