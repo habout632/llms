@@ -40,9 +40,11 @@ multi-group attention
 ## distributed training
 难点是多卡 多机 分布式训练
 使用hf的accelerate 可以很方便的进行分布式训练
-- [] 多卡训练
-- [ ] 多机训练
+- [] 多卡训练 multi-gpus
+- [ ] 多机训练 multi-nodes
 
+
+https://huggingface.co/blog/ram-efficient-pytorch-fsdp
 
 llm.c
 

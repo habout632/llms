@@ -1,4 +1,4 @@
-# Runpod
+# RunPod
 https://www.runpod.io/
 
 # Lambda

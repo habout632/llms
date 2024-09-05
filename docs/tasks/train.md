@@ -14,7 +14,7 @@ https://github.com/karpathy/llm.c/discussions/677
 
 
 
-# Distributed Training
+# Distributed Training Frameworks
 multiple gpus, multiple nodes
 
 ## Huggingface Accelerate
@@ -31,3 +31,5 @@ https://github.com/Lightning-AI/pytorch-lightning
 
 ## Horovod
 https://github.com/horovod/horovod
+
+
