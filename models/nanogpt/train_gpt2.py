@@ -672,11 +672,10 @@ if master_process:
     #     token="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"
     # )
 
-    # save locally
-    model.save_pretrained("gpt2")
+    model.module.save_pretrained("gpt2")
 
     # push to the hub
-    model.push_to_hub(
+    model.module.push_to_hub(
         repo_id="habout632/gpt2",
         token="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")
 

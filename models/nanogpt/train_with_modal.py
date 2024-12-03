@@ -27,8 +27,9 @@ TARGET = "/root/"
 
 N_H100 = 1
 
-COMMIT_SHA = "cbc099dd73291fbd51f08b7b6f9360420f511890"
-SCRIPT_URL = f"https://raw.githubusercontent.com/KellerJordan/modded-nanogpt/{COMMIT_SHA}/train_gpt2.py"
+# COMMIT_SHA = "cbc099dd73291fbd51f08b7b6f9360420f511890"
+# SCRIPT_URL = f"https://raw.githubusercontent.com/KellerJordan/modded-nanogpt/{COMMIT_SHA}/train_gpt2.py"
+SCRIPT_URL = f"https://raw.githubusercontent.com/habout632/llms/refs/heads/main/models/nanogpt/train_gpt2.py"
 
 image = (
     modal.Image.debian_slim(python_version="3.12.7")
@@ -80,9 +81,9 @@ def get_data(num_chunks: int = 2):
 
 @app.function(
     image=image,
-    # gpu=f"H100:{N_H100}",
+    gpu=f"H100:{N_H100}",
     # gpu=f"A10G:{N_H100}",
-    gpu=modal.gpu.A100(size="40GB", count=N_H100),
+    # gpu=modal.gpu.A100(size="40GB", count=N_H100),
     volumes={
         TARGET + "data": data,
         TARGET + "logs": logs,
@@ -112,11 +113,12 @@ def train():
 
 @app.local_entrypoint()
 def main():
-    print("get data on remote server")
-    get_data.remote()
-    print("start training on remote server")
-    train.remote()
     # print("get data on remote server")
-    # get_data.local()
+    # get_data.remote()
     # print("start training on remote server")
-    # train.local()
+    # train.remote()
+
+    print("get data on remote server")
+    get_data.local()
+    print("start training on remote server")
+    train.local()

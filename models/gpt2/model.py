@@ -1,6 +1,7 @@
 # tiktoken
 import torch
 import torch.nn as nn
+from huggingface_hub import PyTorchModelHubMixin
 from transformers import GPT2Tokenizer
 
 
@@ -161,7 +162,7 @@ class TransformerBlock(nn.Module):
         return x
 
 
-class GPT(nn.Module):
+class GPT(nn.Module, PyTorchModelHubMixin):
     def __init__(self, config):
         super(GPT, self).__init__()
         """
@@ -206,6 +207,7 @@ class GPT(nn.Module):
         :param x:
         :return:
         """
+        x = x.long()
         x = self.token_embedding(x)
 
         # position embedding

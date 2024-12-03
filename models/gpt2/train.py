@@ -149,7 +149,7 @@ def train_model_simple(model, train_loader, val_loader, optimizer, device, num_e
 def main(GPT_CONFIG_124M, OTHER_SETTINGS):
     text_data = ""
     # read local file content the-verdict.txt
-    with open("./OpenWikiText10k.txt", "r", encoding='utf-8') as f:
+    with open("../../llm_datasets/OpenWikiText10k.txt", "r", encoding='utf-8') as f:
         text_data = f.read()
 
     model = GPT(GPT_CONFIG_124M)
