@@ -6,7 +6,7 @@
 # from torch.utils.data import DataLoader, Dataset
 # from transformers import GPT2Tokenizer
 #
-# # Define the GPT-2 model architecture
+# # Define the GPT-2 model architecture.md
 # class GPT2(nn.Module):
 #     def __init__(self, vocab_size, d_model, n_head, n_layer, max_seq_len):
 #         super(GPT2, self).__init__()

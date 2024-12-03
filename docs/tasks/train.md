@@ -18,7 +18,7 @@ https://github.com/karpathy/llm.c/discussions/677
 multiple gpus, multiple nodes
 
 ## Huggingface Accelerate
-https://github.com/huggingface/accelerate
+https://github.com/huggingface/Haccelerate
 
 
 ## DeepSpeed

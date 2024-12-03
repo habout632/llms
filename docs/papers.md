@@ -27,30 +27,6 @@
 [Phi-3 Technical Report: A Highly Capable Language Model Locally on Your Phone](https://arxiv.org/abs/2404.14219)
 
 
-### Dataset
-
-open dataset on the web：具体用的什么也没提
-synthetic dataset: 没有提到如何合成的
-
-
-### Pretrain
-
-#### 详细的参数列表
-
-#### 技术点汇总
-
-LongRoPE:不需要重新训练 就可以将context window扩大到128k技术  
-
-muP:在小规模模型获得的hyperparameters 迁移到大规模模型中
-
-GELU > GEGLU > ReGLU > SwiGLU
-
-
-### SFT
-
-### RLHF
-
-### Evaluation Benchmarks
 
 
 
@@ -78,13 +54,15 @@ llm用到的dataset一般都没有公开
 ## Claude 
 [The Claude 3 Model Family: Opus, Sonnet, Haiku](https://www-cdn.anthropic.com/de8ba9b01c9ab7cbabf5c33b80b7bbc618857627/Model_Card_Claude_3.pdf)
 
+## MiniCPM
+[MiniCPM: Unveiling the Potential of Small Language Models with Scalable Training Strategies](https://arxiv.org/abs/2404.06395)
+
+
 # VLM
 
 ## Florence2
 
 ## LLaVA
-
-## MiniCPM
 
 ## Qwen2-VL
 
