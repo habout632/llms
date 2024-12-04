@@ -268,6 +268,6 @@ if __name__ == '__main__':
         "qkv_bias": True
     }
     model = GPT(config)
-    tokenizer = GPT2Tokenizer.from_pretrained("gpt2")
+    tokenizer = GPT2Tokenizer.from_pretrained("openai-community/gpt2")
     generator = GPTGenerator(model, tokenizer, config)
     print(generator.generate("Hello, world!"))
