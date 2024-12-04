@@ -248,7 +248,7 @@ class GPT(nn.Module, PyTorchModelHubMixin):
         self.lm_head = CastedLinear(config.n_embd, config.vocab_size, bias=False)
         self.lm_head.weight.data.zero_()  # @Grad62304977
 
-    def forward(self, idx, target):
+    def forward(self, idx):
 
         docs = (idx == 50256).cumsum(0)
 
@@ -282,5 +282,5 @@ class GPT(nn.Module, PyTorchModelHubMixin):
         logits = self.lm_head(x)
         logits = 30 * torch.tanh(logits / 30)  # @Grad62304977
         logits = logits.float()
-        loss = F.cross_entropy(logits.view(-1, logits.size(-1)), target.view(-1))
-        return loss
+        print(f"logits shape:{logits.shape}")
+        return logits

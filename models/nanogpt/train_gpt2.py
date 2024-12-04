@@ -672,11 +672,11 @@ if master_process:
     #     token="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"
     # )
 
-    model.module.save_pretrained("gpt2")
+    model.module.save_pretrained("nanogpt")
 
     # push to the hub
     model.module.push_to_hub(
-        repo_id="habout632/gpt2",
+        repo_id="habout632/nanogpt",
         token="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")
 
 # -------------------------------------------------------------------------
