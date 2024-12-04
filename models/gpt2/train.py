@@ -95,7 +95,8 @@ def train_model_simple(model, train_loader, val_loader, optimizer, device, num_e
                 
                 #########################################################
                 # eval model
-                if (iteration + 1) % 200 == 0:
+                if (iteration + 1) % 1 == 0:
+                    print("eval models...")
                     model.eval()
                     with torch.no_grad():
 
@@ -115,6 +116,13 @@ def train_model_simple(model, train_loader, val_loader, optimizer, device, num_e
                             best_perplexity = eval_perplexity
                             torch.save(model.state_dict(), 'best.pt')
                             logger.info("Best model saved successfully.")
+
+                            model.save_pretrained("gpt2")
+
+                            # push to the hub
+                            model.push_to_hub(
+                                repo_id="habout632/gpt2",
+                                token="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")
 
                         context = torch.tensor(tokenizer.encode(start_context)).unsqueeze(0).to(device)
                         generated = context
@@ -149,7 +157,8 @@ def train_model_simple(model, train_loader, val_loader, optimizer, device, num_e
 def main(GPT_CONFIG_124M, OTHER_SETTINGS):
     text_data = ""
     # read local file content the-verdict.txt
-    with open("../../llm_datasets/OpenWikiText10k.txt", "r", encoding='utf-8') as f:
+    # with open("../../llm_datasets/OpenWikiText10k.txt", "r", encoding='utf-8') as f:
+    with open("../../llm_datasets/mini-dataset.txt", "r", encoding='utf-8') as f:
         text_data = f.read()
 
     model = GPT(GPT_CONFIG_124M)

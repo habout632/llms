@@ -6,6 +6,7 @@ llm_datasets/
 
 *.pt
 *.pth
+*.safetensors
 
 .idea/
 

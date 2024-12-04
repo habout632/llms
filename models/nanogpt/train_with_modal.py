@@ -113,12 +113,12 @@ def train():
 
 @app.local_entrypoint()
 def main():
-    # print("get data on remote server")
-    # get_data.remote()
-    # print("start training on remote server")
-    # train.remote()
-
     print("get data on remote server")
-    get_data.local()
+    get_data.remote()
     print("start training on remote server")
-    train.local()
+    train.remote()
+
+    # print("get data on remote server")
+    # get_data.local()
+    # print("start training on remote server")
+    # train.local()
