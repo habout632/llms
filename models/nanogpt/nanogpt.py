@@ -250,7 +250,7 @@ class GPT(nn.Module, PyTorchModelHubMixin):
 
     def forward(self, idx):
 
-        docs = (idx == 50256).cumsum(0)
+        docs = (idx == 50256).to(torch.int64).cumsum(0)
 
         def document_causal_mask(b, h, q_idx, kv_idx):
             causal_mask = q_idx >= kv_idx

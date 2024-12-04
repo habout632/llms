@@ -63,7 +63,7 @@ image = (
         index_url="https://download.pytorch.org/whl/nightly/cu124",  # tested with torch-2.6.0.dev20241120
     )
     .apt_install("wget")
-    .run_commands([f"wget -O {TARGET + 'nanogpt.py'} {SCRIPT_URL}"])
+    .run_commands([f"wget -O {TARGET + 'nanogpt.py'} {SCRIPT_URL}"], force_build=True)
     .env({"TORCHINDUCTOR_CACHE_DIR": "/root/.inductor-cache"})
     .env({"TORCHINDUCTOR_FX_GRAPH_CACHE": "1"})
 )
