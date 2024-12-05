@@ -6,6 +6,7 @@
 * 训练数据规模 fineweb ~0.9B tokens
 
 本篇文章是从头预训练一个GPT2@124M GPT2模型(模型大小为124M), 可以完整的实战体验一下LLM预训练的过程。
+能够初步体验一下训练好的LLM生成的效果，并且可以自己修改代码，实现一些自己的想法。
 
 这里面的GPT2已经不是最初的版本了，使用了很多优化的技术和特性来提升性能：
 * RoPE
@@ -60,10 +61,13 @@ train_with_modal.py其实是一个wrapper，把modal的代码封装了一层，�
 真正的执行脚本是train_gpt2.py
 
 ### 说明
-1. fineweb10B数据是已经处理成了token(bin格式文件). 所以在脚本里面直接使用 不需要使用tokernizer再进行额外处理
-2. nanogpt.py是把gpt2模型本身涉及到的文件都提取出来的。移除了ddp分布式，torch.compile相关的为了提升性能的代码。
-3. 
+1. nanogpt.py是把gpt2模型本身涉及到的文件都提取出来的。移除了ddp分布式，torch.compile相关的为了提升性能的代码。
 
+
+### dataset
+fineweb10B数据是已经处理成了token(bin格式文件). 所以在脚本里面直接使用 不需要使用tokernizer再进行额外处理
+![img_10.png](img_10.png)
+https://huggingface.co/datasets/kjj0/fineweb10B-gpt2/tree/main
 
 # 验证训练效果
 
