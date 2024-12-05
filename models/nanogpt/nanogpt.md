@@ -12,7 +12,7 @@
 * flex attention
 * torch.compile(torch.dynamo, torch._inductor)
 * ddp
-* Muon Optimizer
+* Muon Optimizer(主要就靠这个optimizer 将训练时间缩短了一半)
 跑完整个过程之后，回过头来仔细学习了解这些技术和pytorch特性。有助于了解整个过程。
 
 
@@ -88,6 +88,7 @@ This is the first in our series of blog posts on the subject (which we have done
 acc: 0.2837 acc_norm: 2955/10042=0.2943
 ```
 随机的分数是0.25，比随机分数强点不多。这个没有办法，数据规模和模型参数规模都很小，所以只能得到这么一个结果
+gpt的涌现是在1B规模出现的, 所以可以尝试一下0.5B, 1B的效果
 
 
 运行eval脚本
@@ -103,11 +104,11 @@ https://github.com/alexjc/nanogpt-speedrun/blob/master/eval_gpt2.py
 # to-do-list
 - [ ] 自己了解模型更多的细节
 - [ ] 切分成中文数据集
-需要一个中文数据集 数据规模刚刚好
+需要一个中文数据集 数据规模刚刚好 @
 - https://github.com/mobvoi/seq-monkey-data
 ![img_9.png](img_9.png)
 - [ ] 指令微调
-- [ ] 使用lighteval 在跟多的数据集上评估
+- [ ] 使用lighteval 在更多的数据集上评估
 ```markdown
     commonsense_qa (acc/acc_norm)
     hellaswag (acc/acc_norm)
