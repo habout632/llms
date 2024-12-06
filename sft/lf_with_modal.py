@@ -33,10 +33,10 @@ image = (
     .run_commands([
         f"wget -O {TARGET}medbench_20241204.jsonl {DATASET_URL}",
         f"wget -O {TARGET}sft.yaml {CONFIG_URL}"
+    ], force_build=True)
+    .run_commands([
+        f"llamafactory-cli train /root/sft.yaml"
     ])
-    # .run_commands([
-    #     f"llamafactory-cli train /root/sft.yaml"
-    # ])
     # .run_commands([f"wget -O {TARGET + 'medbench_20241204.jsonl'} {DATASET_URL}"])
     # .run_commands([f"wget -O {TARGET + 'sft.yaml'} {CONFIG_URL}"], force_build=True)
     # .run_commands([f"wget -O {TARGET + 'medbench_20241204.jsonl'} {DATASET_URL}"], force_build=True)
@@ -49,8 +49,8 @@ image = (
 @app.function(
     image=image,
     # gpu=f"H100:{N_H100}",
-    gpu=f"A10G",
-    # gpu=modal.gpu.A100(size="40GB", count=N_H100),
+    # gpu=f"A10G",
+    gpu=modal.gpu.A100(size="40GB", count=1),
     # volumes={
     #     TARGET + "data": data,
     #     TARGET + "logs": logs,
