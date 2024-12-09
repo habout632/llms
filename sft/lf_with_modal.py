@@ -73,9 +73,9 @@ image = (
 
 @app.function(
     image=image,
-    # gpu=f"H100:{N_H100}",
+    gpu=f"H100:1",
     # gpu=f"A10G",
-    gpu=modal.gpu.A100(size="40GB", count=1),
+    # gpu=modal.gpu.A100(size="40GB", count=1),
     # volumes={
     #     TARGET + "data": data,
     #     TARGET + "logs": logs,
@@ -107,7 +107,7 @@ def run():
     # Capture output
     # llamafactory-cli train examples/train_lora/llama3_lora_sft.yaml
     # result = subprocess.run(["cd", "/root/LLaMA-Factory"], capture_output=True, text=True)
-    result = subprocess.run(["llamafactory-cli", "train", "/root/sft.yaml"],
+    result = subprocess.run(["llamafactory-cli", "train", "/root/LLaMA-Factory/data/sft.yaml"],
                             capture_output=True, text=True)
     print(result.stdout)
 
