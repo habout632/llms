@@ -5,8 +5,8 @@ do_train: true
 finetuning_type: lora
 lora_target: all
 
-dataset: medbench_20241204.jsonl
-dataset_dir: /root
+dataset: identity
+dataset_dir: data
 template: qwen
 cutoff_len: 1024
 max_samples: 1000

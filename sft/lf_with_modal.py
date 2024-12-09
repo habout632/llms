@@ -13,6 +13,20 @@ TARGET = "/root/"
 DATASET_URL = f"https://huggingface.co/datasets/habout632/medicine_test/resolve/main/medbench_20241204.jsonl"
 CONFIG_URL = f"https://raw.githubusercontent.com/habout632/llms/refs/heads/main/sft/sft.yaml"
 
+# 创建 dataset_info.json 的内容
+DATASET_INFO = """{
+    "identity": {
+        "file_name": "medbench_20241204.jsonl",
+        "file_sha1": null,
+        "columns": {
+            "prompt": "instruction",
+            "query": "input",
+            "response": "output"
+        }
+    }
+}"""
+
+
 image = (
     modal.Image.debian_slim(python_version="3.12.7")
     .pip_install("numpy<3", "tqdm", "huggingface_hub", "transformers", "metrics")
@@ -30,10 +44,17 @@ image = (
         "cd /root/LLaMA-Factory && pip install -e ."  # 确保在正确的目录下执行安装
     ])
     # Download required files
+    # .run_commands([
+    #     f"wget -O {TARGET}medbench_20241204.jsonl {DATASET_URL}",
+    #     f"wget -O {TARGET}sft.yaml {CONFIG_URL}"
+    # ], force_build=True)
     .run_commands([
-        f"wget -O {TARGET}medbench_20241204.jsonl {DATASET_URL}",
-        f"wget -O {TARGET}sft.yaml {CONFIG_URL}"
-    ], force_build=True)
+        "mkdir -p /root/LLaMA-Factory/data",
+        f"echo '{DATASET_INFO}' > /root/LLaMA-Factory/data/dataset_info.json",
+        # 下载数据集和配置文件
+        f"wget -O /root/LLaMA-Factory/data/medbench_20241204.jsonl {DATASET_URL}",
+        f"wget -O /root/sft.yaml {CONFIG_URL}"
+    ])
     .run_commands([
         f"llamafactory-cli train /root/sft.yaml"
     ])
