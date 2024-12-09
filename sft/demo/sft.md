@@ -80,13 +80,13 @@ modal.gpu.GPU = modal.gpu.A100(size="40GB", count=1)
 保持默认
 
 ## URL 配置
-### DATASET_URL: str = "https://huggingface.co/datasets/habout632/medicine_test/resolve/main/medbench_20241204.jsonl"
+### DATASET_URL: str = "https://raw.githubusercontent.com/hiyouga/LLaMA-Factory/refs/heads/main/data/alpaca_zh_demo.json"
 微调数据集文件
 
-### DATASET_INFO_URL: str = "https://raw.githubusercontent.com/habout632/llms/refs/heads/main/sft/dataset_info.json"
+### DATASET_INFO_URL: str = "https://raw.githubusercontent.com/habout632/llms/refs/heads/main/sft/demo/dataset_info.json"
 dataset_info.json llamafactor用到的配置dataset文件 
 
-### CONFIG_URL: str = "https://raw.githubusercontent.com/habout632/llms/refs/heads/main/sft/sft.yaml"
+### CONFIG_URL: str = "https://raw.githubusercontent.com/habout632/llms/refs/heads/main/sft/demo/sft.yaml"
 llamafactory用到的配置文件
 
 
