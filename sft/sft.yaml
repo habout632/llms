@@ -19,7 +19,7 @@ save_steps: 500
 plot_loss: true
 overwrite_output_dir: true
 
-per_device_train_batch_size: 32
+per_device_train_batch_size: 16
 gradient_accumulation_steps: 8
 learning_rate: 1.0e-4
 num_train_epochs: 3.0

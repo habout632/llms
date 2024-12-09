@@ -59,9 +59,9 @@ image = (
         f"wget -O /root/LLaMA-Factory/data/medbench_20241204.jsonl {DATASET_URL}",
         f"wget -O /root/LLaMA-Factory/data/sft.yaml {CONFIG_URL}"
     ], force_build=True)
-    .run_commands([
-        f"llamafactory-cli train /root/LLaMA-Factory/data/sft.yaml"
-    ])
+    # .run_commands([
+    #     f"llamafactory-cli train /root/LLaMA-Factory/data/sft.yaml"
+    # ])
     # .run_commands([f"wget -O {TARGET + 'medbench_20241204.jsonl'} {DATASET_URL}"])
     # .run_commands([f"wget -O {TARGET + 'sft.yaml'} {CONFIG_URL}"], force_build=True)
     # .run_commands([f"wget -O {TARGET + 'medbench_20241204.jsonl'} {DATASET_URL}"], force_build=True)
@@ -73,9 +73,9 @@ image = (
 
 @app.function(
     image=image,
-    gpu=f"H100:1",
+    # gpu=f"H100:1",
     # gpu=f"A10G",
-    # gpu=modal.gpu.A100(size="40GB", count=1),
+    gpu=modal.gpu.A100(size="40GB", count=1),
     # volumes={
     #     TARGET + "data": data,
     #     TARGET + "logs": logs,
@@ -93,13 +93,35 @@ image = (
 )
 def run():
     # os.environ['HF_HOME'] = '/data/models'
-
+    import torch
+    import sys
     import subprocess
 
-    # First verify the directory exists
-    print("Current directory contents:")
-    dirs = subprocess.run(["ls", "-la", "/root"], capture_output=True, text=True)
-    print(dirs.stdout)
+    # 验证 GPU
+    # 验证环境
+    print("\n=== 环境检查 ===")
+    print("当前工作目录:", os.getcwd())
+    print("CUDA is available:", torch.cuda.is_available())
+    if torch.cuda.is_available():
+        print("GPU device:", torch.cuda.get_device_name(0))
+        print("GPU memory:", torch.cuda.get_device_properties(0).total_memory / 1024**3, "GB")
+
+    print("\n=== 文件检查 ===")
+    print("LLaMA-Factory 目录内容:")
+    subprocess.run(["ls", "-la", "/root/LLaMA-Factory"])
+
+    print("\n数据目录内容:")
+    subprocess.run(["ls", "-la", "/root/LLaMA-Factory/data"])
+
+    print("\n配置文件内容:")
+    subprocess.run(["cat", "/root/LLaMA-Factory/data/sft.yaml"])
+
+
+
+    # # First verify the directory exists
+    # print("Current directory contents:")
+    # dirs = subprocess.run(["ls", "-la", "/root"], capture_output=True, text=True)
+    # print(dirs.stdout)
     #
     # # Run command and wait for it to complete
     # subprocess.run(["ls", "-l"])
@@ -107,10 +129,45 @@ def run():
     # Capture output
     # llamafactory-cli train examples/train_lora/llama3_lora_sft.yaml
     # result = subprocess.run(["cd", "/root/LLaMA-Factory"], capture_output=True, text=True)
-    result = subprocess.run(["llamafactory-cli", "train", "/root/LLaMA-Factory/data/sft.yaml"],
-                            capture_output=True, text=True)
-    print(result.stdout)
 
+    print("Starting training...")
+
+    # 使用 subprocess.run 但不捕获输出，而是直接打印到控制台
+    try:
+        # 首先验证命令是否存在
+        which_result = subprocess.run(["which", "llamafactory-cli"],
+                                    capture_output=True,
+                                    text=True)
+        print("llamafactory-cli 路径:", which_result.stdout)
+
+        result = subprocess.run(
+            ["llamafactory-cli", "train", "/root/LLaMA-Factory/data/sft.yaml"],
+            cwd="/root/LLaMA-Factory",
+            check=True,  # 这会在命令失败时抛出异常
+            text=True,
+            stdout=sys.stdout,  # 直接输出到控制台
+            stderr=sys.stderr
+        )
+        print("\n命令输出:")
+        print(result.stdout)
+        print("\n错误输出:")
+        print(result.stderr)
+
+        if result.returncode != 0:
+            print(f"\n命令失败，返回码: {result.returncode}")
+            raise subprocess.CalledProcessError(
+                result.returncode,
+                result.args,
+                result.stdout,
+                result.stderr
+            )
+    except subprocess.CalledProcessError as e:
+        print(f"Training failed with return code {e.returncode}")
+        print(f"Error output: {e.stderr}")
+        raise e
+    except Exception as e:
+        print(f"An unexpected error occurred: {str(e)}")
+        raise e
     # Shell commands
     subprocess.run("echo $HOME", shell=True)
 
