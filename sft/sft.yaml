@@ -6,7 +6,7 @@ finetuning_type: lora
 lora_target: all
 
 dataset: medbench
-dataset_dir: data
+dataset_dir: /root/LLaMA-Factory/data
 template: qwen
 cutoff_len: 1024
 max_samples: 1000

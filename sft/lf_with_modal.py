@@ -11,7 +11,7 @@ vol = modal.Volume.from_name("sft")
 TARGET = "/root/"
 # MODEL_URL = f"https://raw.githubusercontent.com/habout632/llms/refs/heads/main/models/nanogpt/nanogpt.py"
 DATASET_URL = f"https://huggingface.co/datasets/habout632/medicine_test/resolve/main/medbench_20241204.jsonl"
-DATASET_INFO_URL = f"https://huggingface.co/datasets/habout632/medicine_test/resolve/main/dataset_info.json"
+DATASET_INFO_URL = f"https://raw.githubusercontent.com/habout632/llms/refs/heads/main/sft/dataset_info.json"
 CONFIG_URL = f"https://raw.githubusercontent.com/habout632/llms/refs/heads/main/sft/sft.yaml"
 
 # Fixed JSON string with proper escaping
@@ -57,10 +57,10 @@ image = (
         # 下载数据集和配置文件
         f"wget -O /root/LLaMA-Factory/data/dataset_info.json {DATASET_INFO_URL}",
         f"wget -O /root/LLaMA-Factory/data/medbench_20241204.jsonl {DATASET_URL}",
-        f"wget -O /root/sft.yaml {CONFIG_URL}"
+        f"wget -O /root/LLaMA-Factory/data/sft.yaml {CONFIG_URL}"
     ], force_build=True)
     .run_commands([
-        f"llamafactory-cli train /root/sft.yaml"
+        f"llamafactory-cli train /root/LLaMA-Factory/data/sft.yaml"
     ])
     # .run_commands([f"wget -O {TARGET + 'medbench_20241204.jsonl'} {DATASET_URL}"])
     # .run_commands([f"wget -O {TARGET + 'sft.yaml'} {CONFIG_URL}"], force_build=True)
