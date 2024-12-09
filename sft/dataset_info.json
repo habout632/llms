@@ -1,0 +1,11 @@
+{
+    "medbench": {
+        "file_name": "medbench_20241204.jsonl",
+        "file_sha1": null,
+        "columns": {
+            "prompt": "instruction",
+            "query": "input",
+            "response": "output"
+        }
+    }
+}
