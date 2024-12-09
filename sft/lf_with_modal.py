@@ -15,7 +15,7 @@ CONFIG_URL = f"https://raw.githubusercontent.com/habout632/llms/refs/heads/main/
 
 # 创建 dataset_info.json 的内容
 DATASET_INFO = """{
-    "identity": {
+    "medbench": {
         "file_name": "medbench_20241204.jsonl",
         "file_sha1": null,
         "columns": {

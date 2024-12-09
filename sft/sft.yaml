@@ -5,7 +5,7 @@ do_train: true
 finetuning_type: lora
 lora_target: all
 
-dataset: identity
+dataset: medbench
 dataset_dir: data
 template: qwen
 cutoff_len: 1024
