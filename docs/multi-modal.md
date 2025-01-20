@@ -1,3 +1,13 @@
+markdown table
+| Model | Parameters |
+| --- | --- |
+| Phi-3-Vision | Parameters |
+| CogVLM2 | Parameters |
+| PaliGemma | Parameters |
+| MiniCPM-V 2.6| Parameters |
+| Qwen2-VL | Parameters |
+| GLM4V | Parameters |
+
 # Qwen2-VL
 Openclip’s ViT-bigG 
 
