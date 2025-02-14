@@ -143,6 +143,9 @@ Device-Level Balance Loss使用较大的权重(α2)
 因此,这两个损失函数是保证MoE模型能够高效稳定训练的重要组成部分。它们共同作用,既保证了模型训练的质量,又提高了训练效率。
 
 
+
+# DeepseekMoE v3
+![img_8.png](img_8.png)
 这些损失函数会与主要的token预测损失(通常是交叉熵损失)一起组成最终的总损失函数。总损失函数的计算方式大致如下:
 ```python
 Total Loss = Token Prediction Loss + α1 * Expert Balance Loss + α2 * Device Balance Loss
@@ -152,3 +155,32 @@ Total Loss = Token Prediction Loss + α1 * Expert Balance Loss + α2 * Device Ba
 - α1: Expert-Level Balance Loss的权重(较小,如0.001-0.01)
 - α2: Device-Level Balance Loss的权重(较大,如0.05)
 ```
+
+
+上面的例子就是auxiliary loss, 在main loss的基础上增加了一个额外的辅助损失 作为优化目标
+
+### 传统方法中的辅助损失计算示意
+auxiliary_loss = α * Σ(expert_load * importance_score)
+total_loss = main_loss + auxiliary_loss
+
+deepseek v3当中取消了auxiliary loss free
+
+DeepSeek-V3的负载均衡策略主要创新在于引入了"无辅助损失"(auxiliary-loss-free)的方法，具体包含以下几个关键点：
+
+基本原理
+传统MoE模型通常使用辅助损失(auxiliary loss)来实现负载均衡，但过大的辅助损失会损害模型性能
+DeepSeek-V3采用动态偏置项(bias term)来调节专家的选择概率，而不是直接使用辅助损失
+具体实现方式
+
+复制
+- 为每个专家引入一个偏置项bi
+- 在路由决策时，将偏置项加到原始亲和度分数上:
+  score = si,t + bi
+- 使用修改后的分数来选择top-K专家
+- 但在计算最终的门控值时仍使用原始亲和度分数
+动态调整机制
+在每个训练步骤结束时监控整个batch的专家负载
+如果某专家超载：将其偏置项减少γ
+如果某专家负载不足：将其偏置项增加γ
+γ是一个可调节的超参数，称为偏置更新速度
+
