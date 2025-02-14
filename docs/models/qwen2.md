@@ -47,7 +47,6 @@ loss是什么， 是怎么个训练过程？ qa 数据集格式
 
 reward model
 
-## DPO
 
 ## GRPO
 
@@ -65,6 +64,9 @@ reward model
 1Qwen2.5-Turbo is identiffed as qwen-turbo-2024-11-01 and Qwen2.5-Plus is identiffed as qwen-plus-2024-xx-xx
 (to be released) in the API.
 
+
+AdamW 大模型训练基本使用的都是AdamW
+
 # MoE
 Qwen1.5-MoE (Yang et al., 2024a)
 ffne-grained expert segmentation (Dai et al., 2024) 
@@ -75,3 +77,10 @@ BBPE
 
 
 阿里云提供的qwen 2.5 turbo和plus原来都是 MoE
+
+### SwiGLU activation function
+现在的LLM都用SwiGLU,原因是
+
+Swish + GLU
+#### Swish
+![img_3.png](img_3.png)

@@ -26,3 +26,7 @@
 6. 参数规模
 - BERT-base: 110M参数
 - GPT-2: 117M-1.5B参数不等
+
+7.tokenizer
+- BERT: WordPiece
+- GPT-2: Byte-Pair Encoding(BPE)
