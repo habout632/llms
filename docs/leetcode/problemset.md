@@ -16,12 +16,13 @@ https://leetcode.cn/studyplan/leetcode-75/
 
 
 # 数组，字符串
-| 题目 | 描述 | 难度 | 思路 |
-| ---- | ---- | ---- | ---- |
-| [88. 合并两个有序数组](https://leetcode.cn/problems/valid-parentheses/description/) | sdfsdfds | 简单 | 将双指针初始化在两个数组的尾部，然后从后向前进行合并  |
-| [27. 移除元素](https://leetcode.cn/problems/valid-parentheses/description/) | sdfsdfds | 简单 | 使用快慢指针， 快指针一直在前面走， 遇到不等于val 赋值给后面的慢指针|
-| [26. 删除有序数组中的重复项 ](https://leetcode.cn/problems/valid-parentheses/description/) | sdfsdfds | 简单 | 使用快慢指针， 快指针一直在前面走，快指针和慢指针不一样的话 赋值给慢指针 否则 继续往前走 。注意：这个题的要点在于是一个有序数组 重复元素一定是连在一起的|
-| [169. 多数元素 ](https://leetcode.cn/problems/valid-parentheses/description/) | sdfsdfds | 简单 | 使用正负电荷的比喻 假设这个数是众数，那么计数器(整体的电荷)一定是正的。如果遇到计数器为零的情况, 那就说明一定不是众数 https://labuladong.online/algo/problem-set/hash-table/#%E8%A7%A3%E6%B3%95%E4%BB%A3%E7%A0%81-10|
+| 题目                                                                            | 描述 | 难度 | 思路                                                                                                                                                           |
+|-------------------------------------------------------------------------------| ---- | ---- |--------------------------------------------------------------------------------------------------------------------------------------------------------------|
+| [88. 合并两个有序数组](https://leetcode.cn/problems/valid-parentheses/description/)   | sdfsdfds | 简单 | 将双指针初始化在两个数组的尾部，然后从后向前进行合并                                                                                                                                   |
+| [27. 移除元素](https://leetcode.cn/problems/valid-parentheses/description/)       | sdfsdfds | 简单 | 使用快慢指针， 快指针一直在前面走， 遇到不等于val 赋值给后面的慢指针                                                                                                                        |
+| [26. 删除有序数组中的重复项 ](https://leetcode.cn/problems/valid-parentheses/description/) | sdfsdfds | 简单 | 使用快慢指针， 快指针一直在前面走，快指针和慢指针不一样的话 赋值给慢指针 否则 继续往前走 。注意：这个题的要点在于是一个有序数组 重复元素一定是连在一起的                                                                              |
+| [169. 多数元素 ](https://leetcode.cn/problems/valid-parentheses/description/)     | sdfsdfds | 简单 | 使用正负电荷的比喻 假设这个数是众数，那么计数器(整体的电荷)一定是正的。如果遇到计数器为零的情况, 那就说明一定不是众数 https://labuladong.online/algo/problem-set/hash-table/#%E8%A7%A3%E6%B3%95%E4%BB%A3%E7%A0%81-10 |
+| [1. 两数之和 ](https://leetcode.cn/problems/valid-parentheses/description/)       | sdfsdfds | 简单 | 使用双指针，一个指向头，一个指向尾部，如果和大于目标值，则右指针向前走，如果小于目标值，则左指针向前走。 |                                                                                                                                  |
 
 
 
@@ -56,9 +57,9 @@ https://leetcode.cn/studyplan/leetcode-75/
 
 
 # 一维动态规划
-| 题目 | 描述 | 难度 | 思路 |
-| ---- | ---- | ---- | ---- |
-| [20. 爬梯子](https://leetcode.cn/problems/valid-parentheses/description/) | sdfsdfds | 简单 | 动态规划 状态转移方程 f(i) = f(i-1) + f(i-2) 初始值 f(0) = 1 f(1) = 1|
+| 题目                                                                            | 描述 | 难度 | 思路 |
+|-------------------------------------------------------------------------------| ---- | ---- | ---- |
+| [70. 爬梯子](https://leetcode.cn/problems/climbing-stairs//)                     | sdfsdfds | 简单 | 动态规划 状态转移方程 f(i) = f(i-1) + f(i-2) 初始值 f(0) = 1 f(1) = 1|
 | [121. 买卖股票的最佳时机](https://leetcode.cn/problems/valid-parentheses/description/) | sdfsdfds | 简单 | 动态规划 状态转移方程 f(i) = f(i-1) + f(i-2) 初始值 f(0) = 1 f(1) = 1|
 
 
@@ -66,4 +67,24 @@ https://leetcode.cn/studyplan/leetcode-75/
 | 题目 | 描述 | 难度 | 思路 |
 | ---- | ---- | ---- | ---- |
 | [20. 两数之和](https://leetcode.cn/problems/valid-parentheses/description/) | sdfsdfds | 简单 | 使用左右指针 将数组分为左右两部分，左指针指向头，右指针指向尾，如果左指针的值大于右指针的值，则交换两个指针的值，直到左指针的值小于右指针的值，然后从左指针开始遍历，如果当前值与右指针的值之和等于目标值，则返回两个指针的值，否则将右指针向左移动一位，直到左指针的值大于右指针的值 |
+
+
+# 二叉树
+| 题目 | 描述 | 难度 | 思路 |
+| ---- | ---- | ---- | ---- |
+| [20. 二叉树的最大深度](https://leetcode.cn/problems/maximum-depth-of-binary-tree) | sdfsdfds | 简单 | 使用左右指针 将数组分为左右两部分，左指针指向头，右指针指向尾，如果左指针的值大于右指针的值，则交换两个指针的值，直到左指针的值小于右指针的值，然后从左指针开始遍历，如果当前值与右指针的值之和等于目标值，则返回两个指针的值，否则将右指针向左移动一位，直到左指针的值大于右指针的值 |
+| [20. 二叉树的最大深度](https://leetcode.cn/problems/maximum-depth-of-binary-tree) | sdfsdfds | 简单 | 使用左右指针 将数组分为左右两部分，左指针指向头，右指针指向尾，如果左指针的值大于右指针的值，则交换两个指针的值，直到左指针的值小于右指针的值，然后从左指针开始遍历，如果当前值与右指针的值之和等于目标值，则返回两个指针的值，否则将右指针向左移动一位，直到左指针的值大于右指针的值 |
+| [20. 二叉树的最大深度](https://leetcode.cn/problems/maximum-depth-of-binary-tree) | sdfsdfds | 简单 | 使用左右指针 将数组分为左右两部分，左指针指向头，右指针指向尾，如果左指针的值大于右指针的值，则交换两个指针的值，直到左指针的值小于右指针的值，然后从左指针开始遍历，如果当前值与右指针的值之和等于目标值，则返回两个指针的值，否则将右指针向左移动一位，直到左指针的值大于右指针的值 |
+| [20. 二叉树的最大深度](https://leetcode.cn/problems/maximum-depth-of-binary-tree) | sdfsdfds | 简单 | 使用左右指针 将数组分为左右两部分，左指针指向头，右指针指向尾，如果左指针的值大于右指针的值，则交换两个指针的值，直到左指针的值小于右指针的值，然后从左指针开始遍历，如果当前值与右指针的值之和等于目标值，则返回两个指针的值，否则将右指针向左移动一位，直到左指针的值大于右指针的值 |
+| [20. 二叉树的最大深度](https://leetcode.cn/problems/maximum-depth-of-binary-tree) | sdfsdfds | 简单 | 使用左右指针 将数组分为左右两部分，左指针指向头，右指针指向尾，如果左指针的值大于右指针的值，则交换两个指针的值，直到左指针的值小于右指针的值，然后从左指针开始遍历，如果当前值与右指针的值之和等于目标值，则返回两个指针的值，否则将右指针向左移动一位，直到左指针的值大于右指针的值 |
+
+
+
+# 双指针
+| 题目 | 描述 | 难度 | 思路 |
+| ---- | ---- | ---- | ---- |
+| [88. 合并两个有序数组](https://leetcode.cn/problems/valid-parentheses/description/) | sdfsdfds | 简单 | 将双指针初始化在两个数组的尾部，然后从后向前进行合并  |
+| [27. 移除元素](https://leetcode.cn/problems/valid-parentheses/description/) | sdfsdfds | 简单 | 使用快慢指针， 快指针一直在前面走， 遇到不等于val 赋值给后面的慢指针|
+| [26. 删除有序数组中的重复项 ](https://leetcode.cn/problems/valid-parentheses/description/) | sdfsdfds | 简单 | 使用快慢指针， 快指针一直在前面走，快指针和慢指针不一样的话 赋值给慢指针 否则 继续往前走 。注意：这个题的要点在于是一个有序数组 重复元素一定是连在一起的|
+| [169. 多数元素 ](https://leetcode.cn/problems/valid-parentheses/description/) | sdfsdfds | 简单 | 使用正负电荷的比喻 假设这个数是众数，那么计数器(整体的电荷)一定是正的。如果遇到计数器为零的情况, 那就说明一定不是众数 https://labuladong.online/algo/problem-set/hash-table/#%E8%A7%A3%E6%B3%95%E4%BB%A3%E7%A0%81-10|
 
