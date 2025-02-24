@@ -142,6 +142,7 @@ python
 2. 面试时长
 3. 模型选择: deepseek qwen claude 3.5 sonnet
 4. 面试官的猥琐指数
+5. 面试类型：题库, leetcode, 项目经验 配置占比 题库 100% 项目经验 20% leetcode 0%
 
 ## 
 

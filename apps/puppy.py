@@ -44,80 +44,140 @@ def extract_text_from_pdf(pdf_file):
     return text
 
 
-def generate_questions(resume_text, jd_text=None):
-    try:
-        model_config = get_model_config(st.session_state.selected_model)
-        question_count = st.session_state.question_count
-        include_self_intro = st.session_state.include_self_intro
+def generate_questions_by_type(resume_text, question_type, count, jd_text=None):
+    """根据不同类型生成面试问题"""
+    model_config = get_model_config(st.session_state.selected_model)
+    client = OpenAI(
+        api_key=model_config['api_key'],
+        base_url=model_config['base_url']
+    )
 
-        # 生成自我介绍提示（如果启用）
-        intro_prompt = """
-            请用3-5分钟的时间进行一个简洁的自我介绍，包括：
-            1. 您的教育背景和专业领域
-            2. 相关的工作经验和项目经历
-            3. 您的技术特长和专业优势
-            4. 为什么您认为自己适合这个职位
-            请注意把控时间，突出重点，展现您的专业能力。
+    type_prompts = {
+        'knowledge': f"""
+        请生成{count}个针对性的技术知识题库面试问题。问题应该覆盖基础概念、原理理解等。
+
+        简历内容: {resume_text}
+        {'招聘JD: ' + jd_text if jd_text else ''}
+
+        要求：
+        1. 每个问题都要编号
+        2. 问题应该考察核心技术概念和原理
+        3. 难度要适中，有区分度
+        4. 使用专业但清晰的语言
+        """,
+        'leetcode': f"""
+        请生成{count}个算法编程面试问题，类似LeetCode风格。
+
+        简历内容: {resume_text}
+        {'招聘JD: ' + jd_text if jd_text else ''}
+
+        要求：
+        1. 每个问题都要编号
+        2. 包含具体的问题描述和示例
+        3. 难度要标注（简单/中等/困难）
+        4. 问题类型多样（数组、字符串、动态规划等）
+        """,
+        'project': f"""
+        请生成{count}个项目经验相关的面试问题。
+
+        简历内容: {resume_text}
+        {'招聘JD: ' + jd_text if jd_text else ''}
+
+        要求：
+        1. 每个问题都要编号
+        2. 深入询问简历中提到的具体项目
+        3. 关注技术选型、架构设计、问题解决等
+        4. 考察项目经验的深度和广度
         """
+    }
 
-        if jd_text:
-            prompt = f"""
-            请根据以下简历内容和招聘JD，生成{question_count}个针对性的技术面试问题。
-
-            简历内容: {resume_text}
-
-            招聘JD: {jd_text}
-
-            要求：
-            1. 每个问题都要编号（1-{question_count}）
-            2. 问题要紧密结合JD中的要求和简历中的经验
-            3. 测试候选人是否符合岗位的具体要求
-            4. 关注技术细节和项目实现
-            5. 使用专业但清晰的语言
-            """
-        else:
-            prompt = f"""
-            请根据以下简历内容，生成{question_count}个技术面试问题，重点关注AI项目和经验。
-
-            简历内容: {resume_text}
-
-            要求：
-            1. 每个问题都要编号（1-{question_count}）
-            2. 问题要测试候选人的理论理解和实践经验
-            3. 关注技术细节和项目实现
-            4. 使用专业但清晰的语言
-            """
-
-        client = OpenAI(
-            api_key=model_config['api_key'],
-            base_url=model_config['base_url']
-        )
-
+    try:
         response = client.chat.completions.create(
             model=model_config['model'],
             messages=[
-                {"role": "system", "content": "你是一位专业的AI和机器学习技术面试官，请用中文提供专业的技术面试问题。"},
-                {"role": "user", "content": prompt}
+                {"role": "system", "content": "你是一位专业的技术面试官，请根据要求生成合适的面试问题。"},
+                {"role": "user", "content": type_prompts[question_type]}
             ],
             temperature=0.7
         )
 
         questions = response.choices[0].message.content.strip().split('\n')
-        questions = [q.strip() for q in questions if
-                     q.strip() and any(q.strip().startswith(str(i)) for i in range(1, question_count + 1))]
-        while len(questions) < question_count:
-            questions.append(f"{len(questions) + 1}. 请详细描述您的一个相关项目经验？")
+        questions = [q.strip() for q in questions if q.strip() and any(str(i) in q[:4] for i in range(1, count + 1))]
+        return questions[:count]
+    except Exception as e:
+        st.error(f"生成{question_type}类型问题时出错: {str(e)}")
+        return [f"{i}. 示例{question_type}问题 {i}" for i in range(1, count + 1)]
 
-        # 如果包含自我介绍，将其添加到问题列表开头
-        if include_self_intro:
+
+def calculate_type_questions(total_questions, type_percentages):
+    """计算每种类型的具体题目数量"""
+    type_counts = {}
+    total_percentage = sum(type_percentages.values())
+
+    if total_percentage == 0:
+        return {'knowledge': total_questions}
+
+    # 首先按比例计算
+    remaining = total_questions
+    for type_key, percentage in type_percentages.items():
+        count = int(round(total_questions * percentage / total_percentage))
+        type_counts[type_key] = min(count, remaining)
+        remaining -= type_counts[type_key]
+
+    # 如果还有剩余的题目，分配给百分比最高的类型
+    if remaining > 0:
+        max_type = max(type_percentages.items(), key=lambda x: x[1])[0]
+        type_counts[max_type] += remaining
+
+    return type_counts
+
+
+def generate_questions(resume_text, jd_text=None):
+    """整合不同类型的问题"""
+    try:
+        total_questions = st.session_state.question_count
+        questions = []
+
+        # 获取每种类型的百分比
+        type_percentages = {
+            type_key: type_info['percentage']
+            for type_key, type_info in st.session_state.interview_types.items()
+        }
+
+        # 计算每种类型的具体题目数量
+        type_counts = calculate_type_questions(total_questions, type_percentages)
+
+        # 生成每种类型的问题
+        for type_key, count in type_counts.items():
+            if count > 0:
+                type_questions = generate_questions_by_type(resume_text, type_key, count, jd_text)
+                type_name = st.session_state.interview_types[type_key]['name']
+                questions.extend([f"[{type_name}] {q}" for q in type_questions])
+
+        # 如果生成的问题数量不够，补充题库类型的问题
+        while len(questions) < total_questions:
+            questions.append(f"[题库] {len(questions) + 1}. 请描述一个相关的技术概念？")
+
+        # 如果问题数量超出，截取需要的数量
+        questions = questions[:total_questions]
+
+        # 如果包含自我介绍，将其添加到开头
+        if st.session_state.include_self_intro:
+            intro_prompt = """
+                请用3-5分钟的时间进行一个简洁的自我介绍，包括：
+                1. 您的教育背景和专业领域
+                2. 相关的工作经验和项目经历
+                3. 您的技术特长和专业优势
+                4. 为什么您认为自己适合这个职位
+                请注意把控时间，突出重点，展现您的专业能力。
+            """
             questions.insert(0, intro_prompt)
 
         return questions
-
     except Exception as e:
         st.error(f"生成问题时出错: {str(e)}")
-        base_questions = [f"{i}. 请描述您的一个相关项目经验？" for i in range(1, question_count + 1)]
-        if include_self_intro:
+        base_questions = [f"{i}. 请描述您的相关经验？" for i in range(1, total_questions + 1)]
+        if st.session_state.include_self_intro:
             base_questions.insert(0, intro_prompt)
         return base_questions
 
@@ -126,8 +186,11 @@ def evaluate_answer(question, answer, jd_text=None):
     try:
         model_config = get_model_config(st.session_state.selected_model)
 
-        # 判断是否是自我介绍问题
+        # 判断问题类型
         is_self_intro = "自我介绍" in question and "教育背景" in question
+        is_leetcode = "[LeetCode]" in question
+        is_project = "[项目经验]" in question
+        is_knowledge = "[题库]" in question
 
         if is_self_intro:
             prompt = f"""
@@ -142,33 +205,45 @@ def evaluate_answer(question, answer, jd_text=None):
             优点：[自我介绍中的亮点]
             建议：[改进建议]
             """
-        elif jd_text:
+        elif is_leetcode:
             prompt = f"""
-            请根据招聘JD的要求，评估以下技术面试问题的回答。
-
-            招聘JD: {jd_text}
+            请评估以下算法编程问题的回答。
 
             问题: {question}
             回答: {answer}
 
-            请按以下格式回复：
+            请按以下格式评估：
             分数：[X/10分]
-            评价：[结合JD要求的详细反馈意见]
-            建议：[针对岗位要求的改进建议]
-            匹配度：[回答与JD要求的匹配程度分析]
+            评价：[对解题思路、时间复杂度、代码质量的评价]
+            优化建议：[可能的优化方向]
+            知识点：[涉及的算法知识点]
             """
-        else:
+        elif is_project:
             prompt = f"""
-            请评估以下技术面试问题的回答。
-            请用中文提供详细的反馈和评分。
+            请评估以下项目经验相关问题的回答。
+
+            问题: {question}
+            回答: {answer}
+            {'招聘JD: ' + jd_text if jd_text else ''}
+
+            请按以下格式评估：
+            分数：[X/10分]
+            评价：[对项目理解深度、技术选型、解决方案的评价]
+            亮点：[回答中的亮点]
+            建议：[改进建议]
+            """
+        else:  # 知识题库问题
+            prompt = f"""
+            请评估以下技术知识问题的回答。
 
             问题: {question}
             回答: {answer}
 
-            请按以下格式回复：
+            请按以下格式评估：
             分数：[X/10分]
-            评价：[详细的反馈意见]
-            建议：[改进建议]
+            评价：[对概念理解、专业深度的评价]
+            正确点：[回答中的正确观点]
+            补充：[需要补充的知识点]
             """
 
         client = OpenAI(
@@ -221,6 +296,12 @@ if 'selected_model' not in st.session_state:
     st.session_state.selected_model = 'claude-3-5-sonnet'
 if 'include_self_intro' not in st.session_state:
     st.session_state.include_self_intro = False
+if 'interview_types' not in st.session_state:
+    st.session_state.interview_types = {
+        'knowledge': {'name': '题库', 'percentage': 100},
+        'leetcode': {'name': 'LeetCode', 'percentage': 0},
+        'project': {'name': '项目经验', 'percentage': 20}
+    }
 
 # 添加CSS样式
 st.markdown("""
@@ -286,6 +367,12 @@ st.markdown("""
         border-radius: 5px;
         border-left: 4px solid #4CAF50;
     }
+    .type-percentage {
+        padding: 10px;
+        background-color: #f1f3f4;
+        border-radius: 4px;
+        margin: 5px 0;
+    }
     </style>
 """, unsafe_allow_html=True)
 
@@ -303,7 +390,51 @@ with st.sidebar:
             help="选择是否在面试开始时添加自我介绍环节"
         )
 
+        # 面试类型占比配置
+        st.markdown("### 面试问题类型配置")
+        st.write("设置各类型问题的占比（0-100%）")
+
+        # 为每种面试类型创建滑动条
+        col1, col2 = st.columns(2)
+        with col1:
+            for type_key in ['knowledge', 'leetcode']:
+                type_info = st.session_state.interview_types[type_key]
+                type_info['percentage'] = st.slider(
+                    f"{type_info['name']}占比",
+                    min_value=0,
+                    max_value=100,
+                    value=type_info['percentage'],
+                    help=f"设置{type_info['name']}类型问题的百分比"
+                )
+
+        with col2:
+            type_info = st.session_state.interview_types['project']
+            type_info['percentage'] = st.slider(
+                f"{type_info['name']}占比",
+                min_value=0,
+                max_value=100,
+                value=type_info['percentage'],
+                help=f"设置{type_info['name']}类型问题的百分比"
+            )
+
+        # 显示当前配置的预览
+        st.markdown("### 当前配置预览")
+        total_percentage = sum(t['percentage'] for t in st.session_state.interview_types.values())
+        if total_percentage > 0:
+            for type_key, type_info in st.session_state.interview_types.items():
+                actual_questions = int(
+                    round(st.session_state.question_count * type_info['percentage'] / total_percentage))
+                st.markdown(f"""
+                    <div class="type-percentage">
+                        {type_info['name']}: {actual_questions}题 ({type_info['percentage']}%)
+                    </div>
+                """, unsafe_allow_html=True)
+
+            if total_percentage > 100:
+                st.warning("注意：总占比超过100%，系统会按比例自动调整")
+
         # 问题数量选择
+        st.markdown("### 其他配置")
         st.session_state.question_count = st.slider(
             "技术问题数量",
             min_value=3,
@@ -359,8 +490,13 @@ with st.sidebar:
                 if interview.get('include_self_intro', False):
                     st.write("✓ 包含自我介绍")
                 st.write(f"使用模型: {interview['model']}")
-                if interview['jd_provided']:
-                    st.write("✓ 提供了JD")
+
+                # 显示问题类型分布
+                st.write("问题类型分布:")
+                if 'interview_types' in interview:
+                    for type_key, type_info in interview['interview_types'].items():
+                        if type_info['percentage'] > 0:
+                            st.write(f"- {type_info['name']}: {type_info['percentage']}%")
 
                 st.markdown("---")
                 st.write("问题回顾:")
@@ -484,10 +620,7 @@ if st.session_state.interview_started:
             st.write(st.session_state.scores[-1])
             st.markdown('</div>', unsafe_allow_html=True)
 
-        current_question_index = st.session_state.current_question
-        total_questions = st.session_state.question_count + (1 if st.session_state.include_self_intro else 0)
-
-        if current_question_index < total_questions - 1:
+        if st.session_state.current_question < total_questions - 1:
             if st.button("继续下一题"):
                 st.session_state.current_question += 1
                 st.session_state.show_feedback = False
@@ -513,14 +646,15 @@ if st.session_state.interview_started:
                 interview_record = {
                     'date': time.strftime("%Y-%m-%d %H:%M"),
                     'total_score': total_score,
-                    'average_score': total_score / st.session_state.question_count,
+                    'average_score': total_score / total_questions,
                     'duration': st.session_state.time_limit,
                     'questions': st.session_state.questions,
                     'scores': question_scores,
                     'jd_provided': st.session_state.jd_text is not None,
                     'question_count': st.session_state.question_count,
                     'model': st.session_state.selected_model,
-                    'include_self_intro': st.session_state.include_self_intro
+                    'include_self_intro': st.session_state.include_self_intro,
+                    'interview_types': st.session_state.interview_types.copy()
                 }
 
                 st.session_state.interview_history.insert(0, interview_record)
@@ -531,10 +665,36 @@ if st.session_state.interview_started:
                     st.markdown('<div class="summary-area">', unsafe_allow_html=True)
                     st.subheader("面试总结")
                     st.write(f"使用模型: {st.session_state.selected_model}")
-                    st.write(f"问题数量: {st.session_state.question_count}")
-                    if st.session_state.include_self_intro:
-                        st.write("✓ 包含自我介绍")
+                    st.write(f"问题数量: {total_questions}题")
 
+                    # 显示问题类型分布
+                    st.subheader("问题类型分布")
+                    for type_key, type_info in st.session_state.interview_types.items():
+                        if type_info['percentage'] > 0:
+                            st.write(f"{type_info['name']}: {type_info['percentage']}%")
+
+                    # 按类型统计得分
+                    type_scores = {}
+                    for i, (q, s) in enumerate(zip(st.session_state.questions, st.session_state.scores)):
+                        for type_key, type_info in st.session_state.interview_types.items():
+                            if f"[{type_info['name']}]" in q:
+                                if type_key not in type_scores:
+                                    type_scores[type_key] = {'total': 0, 'count': 0}
+                                try:
+                                    score_line = [line for line in s.split('\n') if '分数：' in line][0]
+                                    score = float(score_line.split('分数：')[1].split('/')[0])
+                                    type_scores[type_key]['total'] += score
+                                    type_scores[type_key]['count'] += 1
+                                except:
+                                    pass
+
+                    st.subheader("各类型得分分析")
+                    for type_key, scores in type_scores.items():
+                        if scores['count'] > 0:
+                            avg_score = scores['total'] / scores['count']
+                            st.write(f"{st.session_state.interview_types[type_key]['name']}: {avg_score:.1f}/10")
+
+                    st.subheader("详细问答回顾")
                     for i, (q, s) in enumerate(zip(st.session_state.questions, st.session_state.scores)):
                         if st.session_state.include_self_intro and i == 0:
                             st.write("\n自我介绍:")
@@ -557,6 +717,7 @@ if st.session_state.interview_started:
                     selected_model = st.session_state.selected_model
                     time_limit = st.session_state.time_limit
                     include_self_intro = st.session_state.include_self_intro
+                    interview_types = st.session_state.interview_types.copy()
 
                     # 重置其他状态
                     st.session_state.clear()
@@ -568,6 +729,7 @@ if st.session_state.interview_started:
                     st.session_state.selected_model = selected_model
                     st.session_state.time_limit = time_limit
                     st.session_state.include_self_intro = include_self_intro
+                    st.session_state.interview_types = interview_types
 
                     # 初始化新面试的状态
                     st.session_state.current_question = 0
